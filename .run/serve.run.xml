@@ -10,7 +10,7 @@
     <EXTENSION ID="org.jetbrains.plugins.ruby.rails.run.RailsRunConfigurationExtension" SCRATCH_USE_RAILS_RUNNER="false" />
     <COMMAND_CONFIG_SETTINGS_ID NAME="GEM_NAME" VALUE="jekyll" />
     <COMMAND_CONFIG_SETTINGS_ID NAME="EXECUTABLE_NAME" VALUE="bundle" />
-    <COMMAND_CONFIG_SETTINGS_ID NAME="EXECUTABLE_ARGS" VALUE="exec jekyll s" />
+    <COMMAND_CONFIG_SETTINGS_ID NAME="EXECUTABLE_ARGS" VALUE="exec jekyll s -H 0.0.0.0" />
     <COMMAND_CONFIG_SETTINGS_ID NAME="WORKING_DIR" VALUE="$PROJECT_DIR$" />
     <method v="2">
       <option name="Make" enabled="true" />
