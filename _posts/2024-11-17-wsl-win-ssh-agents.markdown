@@ -8,7 +8,7 @@ tags: ssh gpg wsl article
 
 ## tl;dr
 
-To use the same SSH keys in Windows (>10 1803) and WSL2 without storing the keys unencrpyted on disk:
+To use the same SSH keys in Windows and WSL2 without storing the keys unencrypted on disk:
 
 * use SSH in Windows Terminal[^28]
 * don't use the ssh agent, that is installed as a service (`Set-Service -Name ssh-agent -StartupType Disabled`)
@@ -329,11 +329,12 @@ But as [I've learned](#wsl2-with-gpg-agent), I can use systemd and npiperelay to
 
 * Disable Windows Open SSH Agent Service: `Set-Service -Name ssh-agent -StartupType Disabled`
 * Install 1Password and enable SSH Agent (Settings -> Developer)
-* Download the patched [npiperelay](https://github.com/NZSmartie/npiperelay/releases/download/v0.1/npiperelay.exe) somewhere to the Windows filesystem (e.g. `c:\Users\myusername\AppData\Roaming\niperelay`)
+* Download the patched [npiperelay](https://github.com/NZSmartie/npiperelay/releases/download/v0.1/npiperelay.exe) somewhere to the Windows filesystem (e.g. `%APPDATA%\niperelay`)
 * config steps in WSL:
 
 ```bash
-ln -s /mnt/c/users/myusername/AppData/Roaming/npiperelay/npiperelay.exe ~/.local/bin/npiperelay.exe`
+ln -s `wslpath "$(powershell.exe -Command '[System.Environment]::GetEnvironmentV
+ariable("APPDATA")')"`/npiperelay/npiperelay.exe ~/.local/bin/npiperelay.exe`
 cat <<EOF > ~/.config/systemd/user/named-pipe-ssh-agent.socket
 [Unit]
 Description=SSH Agent provided by Windows named pipe \\.\pipe\openssh-ssh-agent
@@ -370,6 +371,6 @@ systemctl status --user named-pipe-ssh-agent
 ssh-add -l
 ```
 
-As I mentioned above, this is the not the best solution. A better approach would be to not use 1 Password and instead use [GPG4Win](#gpg4win) and a HSM, like the YubiKey[^27] for storing the key.
+As I mentioned above, this is not the best solution. A better approach would be to not use 1 Password and instead use [GPG4Win](#gpg4win) and a HSM, like the YubiKey[^27] for storing the key.
 
 ## References
