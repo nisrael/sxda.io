@@ -4,7 +4,7 @@
   icon: "fab fa-github"
 
 - type: bluesky
-  icon: "svg-icon bluesky"
+  icon: "fa-brands fa-bluesky"
   url:  "https://bsky.app/profile/sxda.io"
 
 - type: mastodon

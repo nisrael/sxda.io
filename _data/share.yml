@@ -3,7 +3,8 @@
 
 platforms:
   - type: Bluesky
-    icon: "svg-icon bluesky"
+    #icon: "svg-icon bluesky"
+    icon: "fa-brands fa-bluesky"
     link: "https://bsky.app/intent/compose?text=TITLE URL"
 
   #- type: Facebook

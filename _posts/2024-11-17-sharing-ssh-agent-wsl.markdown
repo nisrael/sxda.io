@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Shared use of ssh agent between Windows and WSL"
+title:  "Sharing the ssh agent between Windows and WSL"
 date:   2024-11-17 18:01:00 +0100
 categories: tooling
 tags: ssh gpg wsl article
