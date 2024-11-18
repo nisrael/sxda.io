@@ -96,7 +96,7 @@ comments:
     issue_term: # < url | pathname | title | ...>
   # Giscus options › https://giscus.app
   giscus:
-    repo: nisrael/nisrael.github.io
+    repo: nisrael/sxda.io
     repo_id: R_kgDONQ1W7g
     category: Announcements
     category_id: DIC_kwDONQ1W7s4CkWrJ
