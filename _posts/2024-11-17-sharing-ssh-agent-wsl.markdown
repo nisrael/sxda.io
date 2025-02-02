@@ -19,7 +19,7 @@ To use the same SSH keys in Windows and WSL2 without storing the keys unencrypte
 >
 > My preferred solution is not the "best" solution. Instead of using 1Password (for convenience) it is also possible to use a much more secure solution and create the ssh key on an air gapped PC, store it on a YubiKey (better 2!) and use the described [GPG4Win](#gpg4win) and [WSL2](#wsl2-with-gpg-agent) setup.
 >
-{: .prompt-tip }
+{: .prompt-tip}
 
 [^28]: https://learn.microsoft.com/en-us/windows/terminal/tutorials/ssh
 
@@ -41,7 +41,7 @@ It uses the named pipe `#define AGENT_PIPE_ID L"\\\\.\\pipe\\openssh-ssh-agent"`
 
 > **Supported options**
 > * Windows named pipe: `\\.\pipe\openssh-ssh-agent`
-    {: .prompt-info }
+    {: .prompt-info}
 
 [^1]: https://github.com/PowerShell/Win32-OpenSSH/wiki/About-Win32-OpenSSH-and-Design-Details#security-model-in-windows
 
@@ -79,7 +79,7 @@ If I understand it correctly, then PuTTY, Pageant and Plink nowadays use named p
 > * Windows named pipe, generated randomly and exported in `%USERPROFILE%\.ssh\pageant.conf`
 > * Unix-domain socket (AF_UNIX): `%USERPROFILE%\.ssh\agent.sock`
 > * WM_COPYDATA
-    {: .prompt-info }
+    {: .prompt-info}
 
 > AF_UNIX sockets are only protected against access by Windows filesystem security.
 {: .prompt-warning }
@@ -107,7 +107,7 @@ The installation of Git for Windows also installs a tool called ssh-pageant, whi
 > **Supported options**
 > * Cygwin/MSYS socket emulation
 > * Pageant named pipe with ssh-pageant
-    {: .prompt-info }
+    {: .prompt-info}
 
 [^6]: https://stackoverflow.com/questions/23086038/what-mechanism-is-used-by-msys-cygwin-to-emulate-unix-domain-sockets
 [^7]: https://github.com/cuviper/ssh-pageant
@@ -131,18 +131,19 @@ The 'sockets' provided by gnupg use the "so-called Assuan protocol. This protoco
 49586
 Ù3P§+¥ò9üqd)Î”H‘
 ```
+
 > **Supported options**
 > * Windows named pipe: `//./pipe/openssh-ssh-agent`
 > * LibAssuan Socket:
-    >   * `%USERPROFILE%\AppData\Local\gnupgp\S.gpg-agent.ssh`
+>   * `%USERPROFILE%\AppData\Local\gnupgp\S.gpg-agent.ssh`
 >   * `%USERPROFILE%\AppData\Local\gnupgp\S.gpg-agent.extra`
 >   * `%USERPROFILE%\AppData\Local\gnupgp\S.scdaemon`
 >   * `%USERPROFILE%\AppData\Local\gnupgp\S.gpg-agent`
-      {: .prompt-info }
+{: .prompt-info}
 
 > It is not necessary to store the GPG and SSH keys (encrypted!) on disk. It is also possible to store them securely on an HSM like the YubiKey[^27] and still use the gpg-agent (and scdaemon) to access the cryptographic functions.
 >
-{: .prompt-tip }
+{: .prompt-tip}
 
 [^8]: https://www.gnupg.org/documentation/manuals/gnupg/Agent-Options.html
 [^9]: https://gnupg.org/software/libassuan/index.html
@@ -170,7 +171,7 @@ IdentityAgent
 
 > **Supported options**
 > * Unix-domain sockets (mostly only inside of WSL, see below for details)
-    {: .prompt-info }
+{: .prompt-info}
 
 
 [^20]: https://man7.org/linux/man-pages/man5/ssh_config.5.html
@@ -195,7 +196,7 @@ In this scenario npiperelay acts as a bridge between Windows named pipes and std
 > * Windows named pipe with the help of npiperelay
 > * Unix-domain sockets with the help of socat
 > * Many other options with the help of socat and other command line tools
-    {: .prompt-info }
+{: .prompt-info}
 
 ### WSL1 >= Windows 1803
 
@@ -204,7 +205,7 @@ With Windows Insider build 17093, there came support for Unix-domain sockets in 
 > **Supported options**
 > * Unix-domain sockets (AF_UNIX)
 > * the options from WSL1 < Windows 1803
-    {: .prompt-info }
+{: .prompt-info}
 
 [^15]: https://devblogs.microsoft.com/commandline/windowswsl-interop-with-af_unix/
 
@@ -289,7 +290,7 @@ There is also a description on how to set up the WSL environment to use the Win3
 
 > **Supported options**
 > * Windows named pipe `\\.\pipe\openssh-ssh-agent`
-    {: .prompt-info }
+{: .prompt-info}
 
 [^24]: https://developer.1password.com/docs/ssh/agent
 [^25]: https://developer.1password.com/docs/ssh/integrations/wsl
