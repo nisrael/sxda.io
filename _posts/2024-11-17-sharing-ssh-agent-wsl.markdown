@@ -7,6 +7,7 @@ tags: ssh gpg wsl article
 ---
 
 > This post was updated on 29.05.2025 to include the suggestions from [SunMar](https://github.com/SunMar). Thanks a lot for this and for contributing to this [fork of npiperelay](https://github.com/albertony/npiperelay).
+> The most important updates are in the [My preferred solution](#my-preferred-solution) section.
 {: .prompt-info}
 
 ## tl;dr
@@ -18,7 +19,7 @@ To use the same SSH keys in Windows and WSL2 without storing the keys unencrypte
 * use a password manager, that provides a ssh-agent service ([KeePass with KeeAgent](#keepass-with-keeagent) as a free and customizable solution or [1Password](#1password) for convenience)
 * in WSL2, use `ssh.exe` instead of `ssh`
 
-> ssh.exe works fine, but I feel weird about calling the Windows exe from within WSL. Instead, I could use the "obvious" solution of using systemd to provide a socket and let it do the "dirty" work of calling a windows binary. In this case a binary that pipes the data from the socket to a service running on Windows. [See below for my preferred solution](#my-preferred-solution-updated-on-29052025).
+> ssh.exe works fine, but I feel weird about calling the Windows exe from within WSL. Instead, I could use the "obvious" solution of using systemd to provide a socket and let it do the "dirty" work of calling a windows binary. In this case a binary that pipes the data from the socket to a service running on Windows. [See below for my preferred solution](#my-preferred-solution).
 >
 > My preferred solution is not the "best" solution. Instead of using 1Password (for convenience) it is also possible to use a much more secure solution and create the ssh key on an air gapped PC, store it on a YubiKey (better 2!) and use the described [GPG4Win](#gpg4win) and [WSL2](#wsl2-with-gpg-agent) setup.
 {: .prompt-tip}
@@ -277,7 +278,7 @@ systemctl status --user gpg-agent-ssh.socket
 
 The best thing about this solution is that you hand over all the trouble about starting and stopping the programs to set up the socket and the communication to a software, which was written for this job.
 
-[Below, you can find my preferred solution, where I modified this to work together with 1Password (or KeeAgent).](#my-preferred-solution-updated-on-29052025)
+[Below, you can find my preferred solution, where I modified this to work together with 1Password (or KeeAgent).](#my-preferred-solution)
 
 [^16]: https://github.com/microsoft/WSL/issues/8321#issuecomment-1110263384
 [^17]: https://learn.microsoft.com/en-us/windows/wsl/compare-versions
@@ -324,7 +325,7 @@ winget install winssh-pageant
 
 [^23]: https://github.com/ndbeals/winssh-pageant
 
-## My preferred solution (updated on 29.05.2025)
+## My preferred solution
 
 > This updated version includes the suggestion from [SunMar](https://github.com/SunMar). Thanks a lot for this and for contributing to this [fork of npiperelay](https://github.com/albertony/npiperelay).
 {: .prompt-info}
