@@ -6,6 +6,9 @@ categories: tooling
 tags: ssh gpg wsl article
 ---
 
+> This post was updated on 29.05.2025 to include the suggestions from [SunMar](https://github.com/SunMar). Thanks a lot for this and for contributing to this [fork of npiperelay](https://github.com/albertony/npiperelay).
+{: .prompt-info}
+
 ## tl;dr
 
 To use the same SSH keys in Windows and WSL2 without storing the keys unencrypted on disk:
@@ -15,10 +18,9 @@ To use the same SSH keys in Windows and WSL2 without storing the keys unencrypte
 * use a password manager, that provides a ssh-agent service ([KeePass with KeeAgent](#keepass-with-keeagent) as a free and customizable solution or [1Password](#1password) for convenience)
 * in WSL2, use `ssh.exe` instead of `ssh`
 
-> ssh.exe works fine, but I feel weird about calling the Windows exe from within WSL. Instead, I could use the "obvious" solution of using systemd to provide a socket and let it do the "dirty" work of calling a windows binary. In this case a binary that pipes the data from the socket to a service running on Windows. [See below for my preferred solution](#my-preferred-solution).
+> ssh.exe works fine, but I feel weird about calling the Windows exe from within WSL. Instead, I could use the "obvious" solution of using systemd to provide a socket and let it do the "dirty" work of calling a windows binary. In this case a binary that pipes the data from the socket to a service running on Windows. [See below for my preferred solution](#my-preferred-solution-updated-on-29052025).
 >
 > My preferred solution is not the "best" solution. Instead of using 1Password (for convenience) it is also possible to use a much more secure solution and create the ssh key on an air gapped PC, store it on a YubiKey (better 2!) and use the described [GPG4Win](#gpg4win) and [WSL2](#wsl2-with-gpg-agent) setup.
->
 {: .prompt-tip}
 
 [^28]: https://learn.microsoft.com/en-us/windows/terminal/tutorials/ssh
@@ -183,6 +185,7 @@ Before Windows 1803 and the support for Unix-domain sockets, there was no simple
 The great tool [npiperelay](https://github.com/jstarks/npiperelay) uses this functionality, together with other tools, like [socat](https://linux.die.net/man/1/socat).
 
 > npiperelay is a tool that allows you to access a Windows named pipe in a way that is more compatible with a variety of command-line tools. With it, you can use Windows named pipes from the Windows Subsystem for Linux (WSL).[^13]
+> The original version seems to be unmaintained. But there is a fork that is.[^31]
 
 > Socat is a command line based utility that establishes two bidirectional byte streams and transfers data between them.[^14]
 
@@ -191,6 +194,7 @@ In this scenario npiperelay acts as a bridge between Windows named pipes and std
 [^12]: https://learn.microsoft.com/en-us/windows/wsl/filesystems#interoperability-between-windows-and-linux-commands
 [^13]: https://github.com/jstarks/npiperelay
 [^14]: https://linux.die.net/man/1/socat
+[^31]: https://github.com/albertony/npiperelay/
 
 > **Supported options**
 > * Windows named pipe with the help of npiperelay
@@ -219,7 +223,7 @@ The post, that I mentioned in the introduction and that took me some time findin
 > I've been using this for a couple of years now with few enough headaches that I never tried to look for a better way. But with systemd support now in WSL I decided to see if I could simplify this approach and I found that I could do it all just using systemd and npiperelay. Turns out I could so I packaged it all up in [wsl-gpg-systemd](https://github.com/demonbane/wsl-gpg-systemd) if anyone is interested in giving it a shot. [^19]
 
 Of course, I had used systemd for starting and stopping services, adding them to the system and getting information about it. But besides that I hadn't much thought about it. (That's not quite true, because I always wanted to look into what systemd has to do with name resolution, but haven't done so just yet.)
-It turns out, systemd not only handles system services, but user services as well. And it can take care of socket creation and starting a program when someone accesses the socket. So, with this functionality, systemd will replace socat in the setup. A special requirement demonbane had, for his solution was, that he was using gnupg, which uses the libassuan sockets and that npiperelay was written originally for Windows named pipes. But there is a [fork of npiperelay by NZSmartie](https://github.com/NZSmartie/npiperelay), in which the author added this functionality.[^20]
+It turns out, systemd not only handles system services, but user services as well. And it can take care of socket creation and starting a program when someone accesses the socket. So, with this functionality, systemd will replace socat in the setup. A special requirement demonbane had, for his solution was, that he was using gnupg, which uses the libassuan sockets and that npiperelay was written originally for Windows named pipes. But there is a [fork of npiperelay by albertony](https://github.com/albertony/npiperelay), which is actively maintained and which adds this functionality.
 
 Per socket, there are two systemd file required. One is for defining the socket and one for defining the service that provides the in-/ouput for the socket, that's (the Windows program) npiperelay. The system user file go to `~/.config/systemd/user`:
 
@@ -239,7 +243,7 @@ Accept=true
 WantedBy=sockets.target
 ```
 
-The `%t` in the path to the socket refers to the 'XDG_RUNTIME_DIR'.[^22] Get the path by running:
+The `%t` in the path to the socket refers to the 'XDG_RUNTIME_DIR'.[^30] Get the path by running:
 
 ```shell
 echo $XDG_RUNTIME_DIR
@@ -253,14 +257,14 @@ Requires=gpg-agent-ssh.socket
 
 [Service]
 Type=simple
-ExecStart=%h/.local/bin/npiperelay.exe -ei -s '//./pipe/openssh-ssh-agent'
+ExecStart=%h/.local/bin/npiperelay.exe -p -l -ei -s '//./pipe/openssh-ssh-agent'
 StandardInput=socket
 
 [Install]
 WantedBy=default.target
 ```
 
-> For each socket unit, a matching service unit must exist, describing the service to start on incoming traffic on the socket (see systemd.service(5) for more information about .service units). The name of the .service unit is by default the same as the name of the .socket unit, but can be altered with the Service= option described below. Depending on the setting of the Accept= option described below, this .service unit must either be named like the .socket unit, but with the suffix replaced, unless overridden with Service=; or it must be a template unit named the same way. Example: a socket file foo.socket needs a matching service foo.service if Accept=no is set. If Accept=yes is set, a service template foo@.service must exist from which services are instantiated for each incoming connection.[^21]
+> For each socket unit, a matching service unit must exist, describing the service to start on incoming traffic on the socket (see systemd.service(5) for more information about .service units). The name of the .service unit is by default the same as the name of the .socket unit, but can be altered with the Service= option described below. Depending on the setting of the Accept= option described below, this .service unit must either be named like the .socket unit, but with the suffix replaced, unless overridden with Service=; or it must be a template unit named the same way. Example: a socket file foo.socket needs a matching service foo.service if Accept=no is set. If Accept=yes is set, a service template foo@.service must exist from which services are instantiated for each incoming connection.[^29]
 
 The [npiperelay.exe](https://github.com/NZSmartie/npiperelay/releases/download/v0.1/npiperelay.exe) from the releases page must be downloaded and saved somewhere in the Windows filesystem. This is a requirement of WSL. For convenience (and because it is the path in the service template) a symlink should be created in the `~/.local/bin` directory.
 The systemd unit files can be activated by reloading the systemd manager configuration and enabling the socket unit with the '--now' option. The last command checks the status of the socket.
@@ -273,15 +277,14 @@ systemctl status --user gpg-agent-ssh.socket
 
 The best thing about this solution is that you hand over all the trouble about starting and stopping the programs to set up the socket and the communication to a software, which was written for this job.
 
-[Below, you can find my preferred solution, where I modified this to work together with 1Password (or KeeAgent).](#my-preferred-solution)
+[Below, you can find my preferred solution, where I modified this to work together with 1Password (or KeeAgent).](#my-preferred-solution-updated-on-29052025)
 
 [^16]: https://github.com/microsoft/WSL/issues/8321#issuecomment-1110263384
 [^17]: https://learn.microsoft.com/en-us/windows/wsl/compare-versions
 [^18]: https://devblogs.microsoft.com/commandline/systemd-support-is-now-available-in-wsl/
 [^19]: https://gist.github.com/andsens/2ebd7b46c9712ac205267136dc677ac1?permalink_comment_id=4684560#gistcomment-4684560
-[^20]: https://github.com/NZSmartie/npiperelay
-[^21]: https://www.freedesktop.org/software/systemd/man/latest/systemd.socket.html
-[^22]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html#variables
+[^29]: https://www.freedesktop.org/software/systemd/man/latest/systemd.socket.html
+[^30]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html#variables
 
 ### 1Password
 
@@ -321,7 +324,10 @@ winget install winssh-pageant
 
 [^23]: https://github.com/ndbeals/winssh-pageant
 
-## My preferred solution
+## My preferred solution (updated on 29.05.2025)
+
+> This updated version includes the suggestion from [SunMar](https://github.com/SunMar). Thanks a lot for this and for contributing to this [fork of npiperelay](https://github.com/albertony/npiperelay).
+{: .prompt-info}
 
 I have tried many password managers over the years (KeePass1, KeePass2, EnPass, BitWarden, LastPass, 1Password) and I have to admit, that I finally chose 1Password because it has the best usability and functionality for my use case. It works on all of my devices and can not only manage my ssh keys, but also provides an ssh agent service, that is compatible with the open ssh client on all non-mobile platforms. As I mentioned above, this (sort of) works even in WSL2, since you can
 call the Windows `ssh.exe` from within WSL2.
@@ -330,47 +336,62 @@ But as [I've learned](#wsl2-with-gpg-agent), I can use systemd and npiperelay to
 
 * Disable Windows Open SSH Agent Service: `Set-Service -Name ssh-agent -StartupType Disabled`
 * Install 1Password and enable SSH Agent (Settings -> Developer)
-* Download the patched [npiperelay](https://github.com/NZSmartie/npiperelay/releases/download/v0.1/npiperelay.exe) somewhere to the Windows filesystem (e.g. `%APPDATA%\niperelay`)
+* Download the patched [npiperelay](https://github.com/albertony/npiperelay/releases/download/v1.8.0/npiperelay_windows_amd64.zip) somewhere to the Windows filesystem (e.g. `%APPDATA%\niperelay`)
 * config steps in WSL:
+  * create a symbolic link pointing to `$APPDATA/npiperelay/npiperelay.exe` in `~/.local/bin/npiperelay.exe`, e.g. `ln -s /mnt/c/Users/winusername/AppData/Roaming/npiperelay/npiperelay.exe /home/wslusername/.local/bin/niperelay.exe`
+    ```bash
+    mkdir -p ~/.local/bin
+    ln -s `wslpath "$(powershell.exe -Command '[System.Environment]::GetEnvironmentVariable("APPDATA")')" | tr -d '\r'`/npiperelay/npiperelay.exe ~/.local/bin/npiperelay.exe
+    ```
+  * create the systemd socket unit
+    ```bash
+    cat <<EOF > ~/.config/systemd/user/named-pipe-ssh-agent.socket
+    [Unit]
+    Description=SSH Agent provided by Windows named pipe \\.\pipe\openssh-ssh-agent
 
-```bash
-ln -s `wslpath "$(powershell.exe -Command '[System.Environment]::GetEnvironmentV
-ariable("APPDATA")')"`/npiperelay/npiperelay.exe ~/.local/bin/npiperelay.exe`
-cat <<EOF > ~/.config/systemd/user/named-pipe-ssh-agent.socket
-[Unit]
-Description=SSH Agent provided by Windows named pipe \\.\pipe\openssh-ssh-agent
+    [Socket]
+    ListenStream=%t/ssh/ssh-agent.sock
+    SocketMode=0600
+    DirectoryMode=0700
+    Accept=true
 
-[Socket]
-ListenStream=%t/ssh/ssh-agent.sock
-SocketMode=0600
-DirectoryMode=0700
-Accept=true
+    [Install]
+    WantedBy=sockets.target
+    EOF
+    ```
+  * create the systemd template unit
+    ```bash
+    cat <<EOF > ~/.config/systemd/user/named-pipe-ssh-agent@.service
+    [Unit]
+    Description=Proxy to Windows SSH Agent, which provides the standard named pipe (Win32-OpenSSH, 1Password, KeeAgent, etc.)
+    Requires=named-pipe-ssh-agent.socket
 
-[Install]
-WantedBy=sockets.target
-EOF
+    [Service]
+    Type=simple
+    ExecStart=%h/.local/bin/npiperelay.exe -p -l -ei -s '//./pipe/openssh-ssh-agent'
+    StandardInput=socket
 
-cat <<EOF > ~/.config/systemd/user/named-pipe-ssh-agent@.service
-[Unit]
-Description=Proxy to Windows SSH Agent, which provides the standard named pipe (Win32-OpenSSH, 1Password, KeeAgent, etc.)
-Requires=named-pipe-ssh-agent.socket
-
-[Service]
-Type=simple
-ExecStart=%h/.local/bin/npiperelay.exe -ei -s '//./pipe/openssh-ssh-agent'
-StandardInput=socket
-
-[Install]
-WantedBy=default.target
-EOF
-
-echo "export SSH_AUTH_SOCK=${XDG_RUNTIME_DIR}ssh/ssh-agent.sock" >> ~/.profile
-source ~/.profile
-systemctl daemon-reload --user
-systemctl enable --user --now named-pipe-ssh-agent.socket
-systemctl status --user named-pipe-ssh-agent
-ssh-add -l
-```
+    [Install]
+    WantedBy=default.target
+    EOF
+    ```
+    Here are the explanations for the switches
+    * `-p` poll every 200ms until the named pipe exists and is not busy
+    * `-l` when polling do not poll indefinitely, fail after 300 attempts
+    * `-ei` terminate on EOF reading from stdin, even if there is more data to write
+    * `-s` send a 0-byte message to the pipe after EOF on stdin
+  * add the `SSH_AUTH_SOCK` environment to the `~/.profile`
+    ```bash
+    echo "export SSH_AUTH_SOCK=${XDG_RUNTIME_DIR}ssh/ssh-agent.sock" >> ~/.profile
+    ```
+  * activate the changes and test the result by listing the available keys
+    ```bash
+    source ~/.profile
+    systemctl daemon-reload --user
+    systemctl enable --user --now named-pipe-ssh-agent.socket
+    systemctl status --user named-pipe-ssh-agent.socket
+    ssh-add -l
+    ```
 
 As I mentioned above, this is not the best solution. A better approach would be to not use 1 Password and instead use [GPG4Win](#gpg4win) and a HSM, like the YubiKey[^27] for storing the key.
 
