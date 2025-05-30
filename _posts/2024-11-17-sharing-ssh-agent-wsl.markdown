@@ -346,6 +346,7 @@ But as [I've learned](#wsl2-with-gpg-agent), I can use systemd and npiperelay to
     ```
   * create the systemd socket unit
     ```bash
+    mkdir -p ~/.config/systemd/user/
     cat <<EOF > ~/.config/systemd/user/named-pipe-ssh-agent.socket
     [Unit]
     Description=SSH Agent provided by Windows named pipe \\.\pipe\openssh-ssh-agent
@@ -362,6 +363,7 @@ But as [I've learned](#wsl2-with-gpg-agent), I can use systemd and npiperelay to
     ```
   * create the systemd template unit
     ```bash
+    mkdir -p ~/.config/systemd/user/
     cat <<EOF > ~/.config/systemd/user/named-pipe-ssh-agent@.service
     [Unit]
     Description=Proxy to Windows SSH Agent, which provides the standard named pipe (Win32-OpenSSH, 1Password, KeeAgent, etc.)
