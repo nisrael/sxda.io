@@ -226,3 +226,6 @@ jekyll-archives:
 
 plugins:
   - jemoji
+
+include:
+ - .well-known
