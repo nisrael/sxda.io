@@ -1,0 +1,96 @@
+---
+layout: post
+title:  "Downloading and converting iCloud photos"
+date:   2026-01-04 14:28:00 +0100
+categories: tooling
+tags: icloud icloudpd
+---
+
+# Apple iCloud Fotos Backup
+
+Mit dem folgenden Tool kann man alle Bilder oder die Bilder z.B. eines Albums auf den eigenen Rechner herunterladen. Der Download erfolgt deutlich schneller als über den iCloud Dienst selbst. Bei wiederholten Aufrufen werden nur die neuen Dateien heruntergeladen.
+
+Danach können die \*.heic Bilder mit ImageMagick in JPEG konvertiert werden. Dafür müssen aber alle Bilder in einem Verzeichnis liegen.
+
+## PowerShell als Admin starten
+
+```powershell
+# Script Ausführung erlauben
+Set-ExecutionPolicy AllSigned
+# Chocotlatey installieren https://chocolatey.org/install
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+# Power Shell schliessen und erneut als Admin öffnen
+# Python über chocolatey installieren https://www.python.org/
+choco install python
+# ImageMagick und exiftool über Chocolatey installieren https://imagemagick.org/index.php
+choco install ImageMagick exiftool
+# Power Shell schliessen und wieder als admin öffnen
+# icloudpd Python Client für iCloud Fotos installieren https://github.com/icloud-photos-downloader/icloud_photos_downloader
+pip install icloudpd
+pip install pyicloud
+# Power Shell schliessen und
+```
+
+## neue cmd (nicht powershell) als normaler User starten
+
+```powershell
+# erstmalig anmelden und Passwort im System ablegen
+$ icloud --username username@example.com
+ICloud Password for username@example.com:
+Save password in keyring? (y/N)
+# mit y beantworten
+# über iPhone bestätigen und Code eingeben
+```
+
+## Verzeichnisstruktur anlegen:
+
+```
+H:\iCloud
+H:\iCloud\download
+H:\iCloud\fotos
+H:\iCloud\tools
+```
+
+Windows Executable von exittool herunterladen (<https://exiftool.org/>) und als `exiftool.exe` in `H:\iCloud\tools` ablegen.
+
+## Batch-Dateien
+
+4 Batchdateien in `H:\iCloud` anlegen:
+
+```powershell
+@echo off
+icloudpd.exe -u username@example.com --folder-structure {:%%Y/%%Y-%%m} --set-exif-datetime --skip-live-photos --log-level error --directory "H:\iCloud\download"
+pause
+```
+
+Der Wert für recent sollte angepasst werden, so dass alle Fotos des vergangengen Jahres heruntergeladen werden. Im Zweifelsfall einfach einen viel zu großen Wert eintragen. Dadurch werden bereits heruntergeladene Bilder erneut heruntergeladen und es dauert länger aber dafür sind dann sicher alle da.
+
+```powershell
+@echo off
+icloudpd.exe -u username@example.com --folder-structure {:%%Y/%%Y-%%m} --set-exif-datetime --skip-live-photos --log-level error --recent 500 --directory "H:\iCloud\download"
+pause
+```
+
+```powershell
+@echo off
+echo %DATE% %TIME% mogrify start >> H:\iCloud\error.log
+echo Konvertiere *.HEIC -> *.JPG
+FOR /R H:\iCloud\download %%G IN (*.HEIC) DO (
+   if not exist "%%~pG\%%~nG.jpg" magick mogrify -format jpg -define preserve-timestamp=true "%%G" 2>> H:\iCloud\error.log
+   del "%%G"
+)
+echo %DATE% %TIME% mogrify ende >> H:\iCloud\error.log
+echo Fertig.
+pause
+```
+
+```powershell
+@echo off
+echo %DATE% %TIME% exiftool start >> H:\iCloud\error.log
+echo Benenne Dateien um
+H:
+cd H:\iCloud
+.\tools\exiftool -d .\fotos\%%Y\%%Y-%%m\%%Y-%%m-%%d_%%H-%%M-%%S_%%%%lf.%%%%le "-filename<filemodifydate" "-filename<createdate" "-filename<datetimeoriginal" -r .\download 2>> H:\iCloud\error.log
+echo %DATE% %TIME% exiftool fertig >> H:\iCloud\error.log
+pause
+```
