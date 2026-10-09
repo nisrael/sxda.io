@@ -3,14 +3,12 @@ title = "Sharing the ssh agent between Windows and WSL"
 date = 2024-11-17T18:01:00+01:00
 
 [taxonomies]
-categories = ["tooling"]
 tags = ["ssh", "gpg", "wsl", "article"]
 +++
 
-{% <note type="info"> %}
-This post was updated on 29.05.2025 to include the suggestions from [SunMar](https://github.com/SunMar). Thanks a lot for this and for contributing to this [fork of npiperelay](https://github.com/albertony/npiperelay).
-The most important updates are in the [My preferred solution](#my-preferred-solution) section.
-{% </note> %}
+> [!NOTE]
+> This post was updated on 29.05.2025 to include the suggestions from [SunMar](https://github.com/SunMar). Thanks a lot for this and for contributing to this [fork of npiperelay](https://github.com/albertony/npiperelay).
+> The most important updates are in the [My preferred solution](#my-preferred-solution) section.
 
 ## tl;dr
 
@@ -21,11 +19,10 @@ To use the same SSH keys in Windows and WSL2 without storing the keys unencrypte
 * use a password manager, that provides a ssh-agent service ([KeePass with KeeAgent](#keepass-with-keeagent) as a free and customizable solution or [1Password](#1password) for convenience)
 * in WSL2, use `ssh.exe` instead of `ssh`
 
-{% <note type="tip"> %}
-ssh.exe works fine, but I feel weird about calling the Windows exe from within WSL. Instead, I could use the "obvious" solution of using systemd to provide a socket and let it do the "dirty" work of calling a windows binary. In this case a binary that pipes the data from the socket to a service running on Windows. [See below for my preferred solution](#my-preferred-solution).
-
-My preferred solution is not the "best" solution. Instead of using 1Password (for convenience) it is also possible to use a much more secure solution and create the ssh key on an air gapped PC, store it on a YubiKey (better 2!) and use the described [GPG4Win](#gpg4win) and [WSL2](#wsl2-with-gpg-agent) setup.
-{% </note> %}
+> [!TIP]
+> ssh.exe works fine, but I feel weird about calling the Windows exe from within WSL. Instead, I could use the "obvious" solution of using systemd to provide a socket and let it do the "dirty" work of calling a windows binary. In this case a binary that pipes the data from the socket to a service running on Windows. [See below for my preferred solution](#my-preferred-solution).
+>
+> My preferred solution is not the "best" solution. Instead of using 1Password (for convenience) it is also possible to use a much more secure solution and create the ssh key on an air gapped PC, store it on a YubiKey (better 2!) and use the described [GPG4Win](#gpg4win) and [WSL2](#wsl2-with-gpg-agent) setup.
 
 [^28]: https://learn.microsoft.com/en-us/windows/terminal/tutorials/ssh
 
@@ -45,10 +42,9 @@ According to the wiki "ssh-agent will be reimplemented for Windows as a Windows 
 
 It uses the named pipe `#define AGENT_PIPE_ID L"\\\\.\\pipe\\openssh-ssh-agent"`.[^2]
 
-{% <note type="info"> %}
-**Supported options**
-* Windows named pipe: `\\.\pipe\openssh-ssh-agent`
-{% </note> %}
+> [!NOTE]
+> **Supported options**
+> * Windows named pipe: `\\.\pipe\openssh-ssh-agent`
 
 [^1]: https://github.com/PowerShell/Win32-OpenSSH/wiki/About-Win32-OpenSSH-and-Design-Details#security-model-in-windows
 
@@ -82,16 +78,14 @@ If I understand it correctly, then PuTTY, Pageant and Plink nowadays use named p
 [^10]: https://labs.withsecure.com/publications/abusing-putty-and-pageant-through-native-functionality
 [^11]: https://git.tartarus.org/?p=simon/putty.git;a=commit;h=cf29125fb464169d1bab88a0bc9c18a4ca5a983a
 
-{% <note type="info"> %}
-**Supported options**
-* Windows named pipe, generated randomly and exported in `%USERPROFILE%\.ssh\pageant.conf`
-* Unix-domain socket (AF_UNIX): `%USERPROFILE%\.ssh\agent.sock`
-* WM_COPYDATA
-{% </note> %}
+> [!NOTE]
+> **Supported options**
+> * Windows named pipe, generated randomly and exported in `%USERPROFILE%\.ssh\pageant.conf`
+> * Unix-domain socket (AF_UNIX): `%USERPROFILE%\.ssh\agent.sock`
+> * WM_COPYDATA
 
-{% <note type="warning"> %}
-AF_UNIX sockets are only protected against access by Windows filesystem security.
-{% </note> %}
+> [!WARNING]
+> AF_UNIX sockets are only protected against access by Windows filesystem security.
 
 [^3]: https://the.earth.li/~sgtatham/putty/0.80/htmldoc/Chapter9.html#pageant-cmdline-openssh
 [^4]: https://the.earth.li/~sgtatham/putty/0.80/htmldoc/Chapter9.html#pageant-cmdline-unix
@@ -113,11 +107,10 @@ MSYS:
 
 The installation of Git for Windows also installs a tool called ssh-pageant, which "is a tiny tool for Windows that allows you to use SSH keys from PuTTY's Pageant in Cygwin and MSYS shell environments."[^7]
 
-{% <note type="info"> %}
-**Supported options**
-* Cygwin/MSYS socket emulation
-* Pageant named pipe with ssh-pageant
-{% </note> %}
+> [!NOTE]
+> **Supported options**
+> * Cygwin/MSYS socket emulation
+> * Pageant named pipe with ssh-pageant
 
 [^6]: https://stackoverflow.com/questions/23086038/what-mechanism-is-used-by-msys-cygwin-to-emulate-unix-domain-sockets
 [^7]: https://github.com/cuviper/ssh-pageant
@@ -142,19 +135,17 @@ The 'sockets' provided by gnupg use the "so-called Assuan protocol. This protoco
 Ù3P§+¥ò9üqd)Î”H‘
 ```
 
-{% <note type="info"> %}
-**Supported options**
-* Windows named pipe: `//./pipe/openssh-ssh-agent`
-* LibAssuan Socket:
-  * `%USERPROFILE%\AppData\Local\gnupgp\S.gpg-agent.ssh`
-  * `%USERPROFILE%\AppData\Local\gnupgp\S.gpg-agent.extra`
-  * `%USERPROFILE%\AppData\Local\gnupgp\S.scdaemon`
-  * `%USERPROFILE%\AppData\Local\gnupgp\S.gpg-agent`
-{% </note> %}
+> [!NOTE]
+> **Supported options**
+> * Windows named pipe: `//./pipe/openssh-ssh-agent`
+> * LibAssuan Socket:
+>   * `%USERPROFILE%\AppData\Local\gnupgp\S.gpg-agent.ssh`
+>   * `%USERPROFILE%\AppData\Local\gnupgp\S.gpg-agent.extra`
+>   * `%USERPROFILE%\AppData\Local\gnupgp\S.scdaemon`
+>   * `%USERPROFILE%\AppData\Local\gnupgp\S.gpg-agent`
 
-{% <note type="tip"> %}
-It is not necessary to store the GPG and SSH keys (encrypted!) on disk. It is also possible to store them securely on an HSM like the [YubiKey](https://developers.yubico.com/PGP/SSH_authentication/Windows.html) and still use the gpg-agent (and scdaemon) to access the cryptographic functions.
-{% </note> %}
+> [!TIP]
+> It is not necessary to store the GPG and SSH keys (encrypted!) on disk. It is also possible to store them securely on an HSM like the [YubiKey](https://developers.yubico.com/PGP/SSH_authentication/Windows.html) and still use the gpg-agent (and scdaemon) to access the cryptographic functions.
 
 [^8]: https://www.gnupg.org/documentation/manuals/gnupg/Agent-Options.html
 [^9]: https://gnupg.org/software/libassuan/index.html
@@ -180,10 +171,9 @@ IdentityAgent
   location of the socket.
 ```
 
-{% <note type="info"> %}
-**Supported options**
-* Unix-domain sockets (mostly only inside of WSL, see below for details)
-{% </note> %}
+> [!NOTE]
+> **Supported options**
+> * Unix-domain sockets (mostly only inside of WSL, see below for details)
 
 [^20]: https://man7.org/linux/man-pages/man5/ssh_config.5.html
 [^21]: https://man7.org/linux/man-pages/man1/ssh.1.html
@@ -205,22 +195,20 @@ In this scenario npiperelay acts as a bridge between Windows named pipes and std
 [^14]: https://linux.die.net/man/1/socat
 [^31]: https://github.com/albertony/npiperelay/
 
-{% <note type="info"> %}
-**Supported options**
-* Windows named pipe with the help of npiperelay
-* Unix-domain sockets with the help of socat
-* Many other options with the help of socat and other command line tools
-{% </note> %}
+> [!NOTE]
+> **Supported options**
+> * Windows named pipe with the help of npiperelay
+> * Unix-domain sockets with the help of socat
+> * Many other options with the help of socat and other command line tools
 
 ### WSL1 >= Windows 1803
 
 With Windows Insider build 17093, there came support for Unix-domain sockets in Windows.[^5] A little bit later a blog about using this to allow communications between Windows and WSL programs was published.[^15]
 
-{% <note type="info"> %}
-**Supported options**
-* Unix-domain sockets (AF_UNIX)
-* the options from WSL1 < Windows 1803
-{% </note> %}
+> [!NOTE]
+> **Supported options**
+> * Unix-domain sockets (AF_UNIX)
+> * the options from WSL1 < Windows 1803
 
 [^15]: https://devblogs.microsoft.com/commandline/windowswsl-interop-with-af_unix/
 
@@ -302,10 +290,9 @@ The best thing about this solution is that you hand over all the trouble about s
 [1Password](https://1password.com) supports managing SSH keys and can acts as a Win32 OpenSSH compatible ssh-agent.[^24] Instead of adding the keys on the startup to the agent, the keys are stored in the regular 1Password password safe and confirmation is required, when a programs requests access to it. If storing your passwords in the cloud (US or EU) is ok for you, then this is a really comfortable solution.
 There is also a description on how to set up the WSL environment to use the Win32 OpenSSH ssh.exe instead of the Linux one.[^25] But I would prefer to use the "native" ones in WSL with the help of the systemd bridge solution.
 
-{% <note type="info"> %}
-**Supported options**
-* Windows named pipe `\\.\pipe\openssh-ssh-agent`
-{% </note> %}
+> [!NOTE]
+> **Supported options**
+> * Windows named pipe `\\.\pipe\openssh-ssh-agent`
 
 [^24]: https://developer.1password.com/docs/ssh/agent
 [^25]: https://developer.1password.com/docs/ssh/integrations/wsl
@@ -314,13 +301,12 @@ There is also a description on how to set up the WSL environment to use the Win3
 
 [KeeAgent](https://github.com/dlech/KeeAgent) is a plugin for [KeePass](https://keepass.info) that can act as an ssh-agent. Apart from WSL2, it supports all before mentioned connection methods. There are even 2 modes for MSYS and for Cygwin.[^26]
 
-{% <note type="info"> %}
-**Supported options**
-* Windows named pipe `\\.\pipe\openssh-ssh-agent`
-* MSYS socket
-* Cygwin socket
-* PuTTY compatible WM_COPYDATA
-{% </note> %}
+> [!NOTE]
+> **Supported options**
+> * Windows named pipe `\\.\pipe\openssh-ssh-agent`
+> * MSYS socket
+> * Cygwin socket
+> * PuTTY compatible WM_COPYDATA
 
 [^26]: https://keeagent.readthedocs.io/en/latest/usage/tips-and-tricks.html#using-keeagent-on-windows
 
@@ -339,9 +325,8 @@ winget install winssh-pageant
 
 ## My preferred solution
 
-{% <note type="info"> %}
-This updated version includes the suggestion from [SunMar](https://github.com/SunMar). Thanks a lot for this and for contributing to this [fork of npiperelay](https://github.com/albertony/npiperelay).
-{% </note> %}
+> [!NOTE]
+> This updated version includes the suggestion from [SunMar](https://github.com/SunMar). Thanks a lot for this and for contributing to this [fork of npiperelay](https://github.com/albertony/npiperelay).
 
 I have tried many password managers over the years (KeePass1, KeePass2, EnPass, BitWarden, LastPass, 1Password) and I have to admit, that I finally chose 1Password because it has the best usability and functionality for my use case. It works on all of my devices and can not only manage my ssh keys, but also provides an ssh agent service, that is compatible with the open ssh client on all non-mobile platforms. As I mentioned above, this (sort of) works even in WSL2, since you can
 call the Windows `ssh.exe` from within WSL2.

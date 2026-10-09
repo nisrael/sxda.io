@@ -12,15 +12,13 @@ generate_feeds = true
 # keep the feed URL subscribers already have from the old Jekyll/jekyll-feed setup.
 feed_filenames = ["feed.xml"]
 
-taxonomies = [
-  { name = "categories", feed = true },
-  { name = "tags", feed = true },
-]
+taxonomies = [{ name = "tags", feed = true }]
 
 [markdown]
 smart_punctuation = true
 bottom_footnotes = true
 insert_anchor_links = "right"
+github_alerts = true
 
 [markdown.highlighting]
 style = "inline"
@@ -29,7 +27,7 @@ dark_theme = "Carbonfox"
 extra_themes = ["extra/carbonfox-dark-theme.json"]
 
 [extra]
-tagline = "Some notes about things I do"
+tagline = "Some notes about things I do."
 author_email = "nils@sxda.io"
 
 [extra.giscus]
@@ -40,16 +38,25 @@ category_id = "DIC_kwDONQ1W7s4CkWrJ"
 
 [[extra.social]]
 label = "GitHub"
+icon = "github"
 url = "https://github.com/nisrael"
 
 [[extra.social]]
 label = "Bluesky"
+icon = "bluesky"
 url = "https://bsky.app/profile/sxda.io"
 
 [[extra.social]]
 label = "Mastodon"
+icon = "mastodon"
 url = "https://osna.social/@nils"
 
 [[extra.social]]
+label = "Email"
+icon = "mail"
+url = "mailto:nils@sxda.io"
+
+[[extra.social]]
 label = "RSS"
+icon = "rss"
 url = "/feed.xml"

@@ -11,9 +11,7 @@
     {% if page.date %}
     <p class="post-meta">
       <time datetime="{{ page.date }}">{{ page.date | date(format="%Y-%m-%d") }}</time>
-      {% if page.taxonomies?.categories %}
-      · {% for term in page.taxonomies.categories %}<a href="{{ get_taxonomy_url(kind="categories", name=term) }}">{{ term }}</a>{% if not loop.last %}, {% endif %}{% endfor %}
-      {% endif %}
+      · {% if page.authors %}{{ page.authors | join(sep=", ") }}{% else %}{{ config.author }}{% endif %}
     </p>
     {% endif %}
   </header>

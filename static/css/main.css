@@ -10,10 +10,10 @@
   --fg-strong: #161616;
   --muted: #525252;
   --accent: #0f62fe;
+  --accent-note: #8a3ffc;
   --accent-tip: #198038;
   --accent-warning: #da1e28;
   --border: #e0e0e0;
-  --hatch: rgba(22, 22, 22, 0.045);
   --max-width: 56rem;
 
   /* Pagefind Component UI theming, see
@@ -42,10 +42,10 @@
     --fg-strong: #f2f4f8;
     --muted: #7b7c7e;
     --accent: #78a9ff;
+    --accent-note: #be95ff;
     --accent-tip: #25be6a;
     --accent-warning: #ee5396;
     --border: #393939;
-    --hatch: rgba(242, 244, 248, 0.035);
     --pf-modal-backdrop: rgba(0, 0, 0, 0.6);
   }
 }
@@ -107,11 +107,9 @@ html {
 body {
   margin: 0;
   background: var(--bg);
-  background-image: repeating-linear-gradient(135deg, var(--hatch) 0, var(--hatch) 1px, transparent 1px, transparent 26px);
-  background-attachment: fixed;
   color: var(--fg);
   font-family: var(--font-sans);
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.65;
 }
 
@@ -273,6 +271,15 @@ code {
 }
 
 pre {
+  position: relative;
+}
+
+/* The border/padding/radius live on <code>, not <pre>, so the filename
+   label (a sibling of <code>, not a wrapper around it) can have its own
+   separate border above it — that's what lets the two highlight
+   independently instead of being stuck with one box's single border. */
+pre > code {
+  display: block;
   /* The syntax highlighter sets its own inline background-color (matching
      its theme's editor background), so this needs !important to actually
      show a surface distinct from the page background. */
@@ -281,13 +288,66 @@ pre {
   border-radius: 6px;
   padding: 1rem 1.1rem;
   overflow-x: auto;
-  position: relative;
+  transition: border-color 0.15s ease;
+}
+
+.code-label + code {
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+}
+
+/* Hovering/focusing the "copy code" button highlights the code box's own
+   border, and separately the label's divider line below the filename —
+   but not the border around the filename text itself. */
+pre:has(.copy-code-button:not(.copy-name-button):hover) > code,
+pre:has(.copy-code-button:not(.copy-name-button):focus-visible) > code {
+  border-color: var(--accent);
+}
+
+pre:has(.copy-code-button:not(.copy-name-button):hover) .code-label,
+pre:has(.copy-code-button:not(.copy-name-button):focus-visible) .code-label {
+  border-bottom-color: var(--accent);
+}
+
+/* Filename label on a code block, e.g. ```bash,name=/etc/foo.conf
+   (any key=value on a fence becomes a data-* attribute on <code>, see
+   https://www.getzola.org/documentation/content/syntax-highlighting/).
+   Built as real DOM elements by copy-code.js, not ::before content, so the
+   filename isn't selected along with the code and can have its own button. */
+.code-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem 0.5rem 1.1rem;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 6px 6px 0 0;
+  transition: border-color 0.15s ease;
+}
+
+.code-filename {
+  font-style: italic;
+  font-size: 0.8rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex-shrink: 1;
+  transition: color 0.15s ease;
+}
+
+.code-label:has(.copy-name-button:hover) .code-filename,
+.code-label:has(.copy-name-button:focus-visible) .code-filename {
+  color: var(--accent);
+}
+
+.copy-code-button-right {
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .copy-code-button {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
   padding: 0.25em 0.6em;
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -296,13 +356,24 @@ pre {
   border: 1px solid var(--border);
   border-radius: 4px;
   cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
-pre:hover .copy-code-button,
-.copy-code-button:focus-visible {
+.copy-code-button:not(.inline) {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  opacity: 0;
+}
+
+pre:hover .copy-code-button:not(.inline),
+.copy-code-button:not(.inline):focus-visible {
   opacity: 1;
+}
+
+.copy-name-button {
+  padding: 0.15em 0.45em;
+  font-size: 0.68rem;
 }
 
 .copy-code-button:hover {
@@ -340,24 +411,35 @@ pre:hover .copy-code-button,
   border-radius: 4px;
 }
 
-.callout {
+/* GitHub-style alerts (zola.toml: markdown.github_alerts = true), e.g.
+   > [!NOTE]
+   > ...
+   Zola renders these as <blockquote class="markdown-alert-note">, overriding
+   the plain .post-body blockquote styling below. */
+.post-body blockquote[class^="markdown-alert-"] {
   margin: 1.4rem 0;
   padding: 0.9rem 1.1rem;
   border-radius: 6px;
-  border-left: 4px solid var(--accent);
+  border-left: 4px solid var(--accent-note);
   background: var(--bg-alt);
+  color: var(--fg);
 }
 
-.callout p {
+.post-body blockquote[class^="markdown-alert-"] p {
   margin: 0.3rem 0;
 }
 
-.callout-warning {
-  border-left-color: var(--accent-warning);
+.post-body blockquote.markdown-alert-important {
+  border-left-color: var(--accent);
 }
 
-.callout-tip {
+.post-body blockquote.markdown-alert-tip {
   border-left-color: var(--accent-tip);
+}
+
+.post-body blockquote.markdown-alert-warning,
+.post-body blockquote.markdown-alert-caution {
+  border-left-color: var(--accent-warning);
 }
 
 .term-list {
@@ -382,6 +464,23 @@ pre:hover .copy-code-button,
   font-size: 0.9rem;
 }
 
+.social-links {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
 .social-links a {
+  display: inline-flex;
   color: var(--muted);
+  border-bottom: none !important;
+}
+
+.social-links a:hover {
+  color: var(--accent);
+}
+
+.social-icon {
+  width: 1.1rem;
+  height: 1.1rem;
 }

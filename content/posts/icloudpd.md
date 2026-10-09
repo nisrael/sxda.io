@@ -3,7 +3,6 @@ title = "Downloading and converting iCloud photos"
 date = 2026-01-04T14:28:00+01:00
 
 [taxonomies]
-categories = ["tooling"]
 tags = ["icloud", "icloudpd"]
 +++
 

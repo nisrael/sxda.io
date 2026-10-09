@@ -49,10 +49,17 @@
     <footer class="site-footer">
       <nav class="social-links">
         {% for link in config.extra.social %}
-        <a href="{{ link.url }}">{{ link.label }}</a>{% if not loop.last %} · {% endif %}
-        {% endfor %}
+        <a href="{{ link.url }}" aria-label="{{ link.label }}" title="{{ link.label }}">
+          {%- if link.icon == "github" -%} {{ <icon_github /> }}
+          {%- elif link.icon == "bluesky" -%} {{ <icon_bluesky /> }}
+          {%- elif link.icon == "mastodon" -%} {{ <icon_mastodon /> }}
+          {%- elif link.icon == "rss" -%} {{ <icon_rss /> }}
+          {%- elif link.icon == "mail" -%} {{ <icon_mail /> }}
+          {%- else -%} {{ link.label }}
+          {%- endif -%}
+        </a>
+        {%- endfor %}
       </nav>
-      <p>&copy; {{ now() | date(format="%Y") }} {{ config.author }}</p>
     </footer>
   </div>
   <script src="{{ get_url(path="js/copy-code.js") }}" defer></script>
