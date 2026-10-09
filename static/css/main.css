@@ -30,6 +30,52 @@
   }
 }
 
+/* IBM Plex, OFL-licensed: https://github.com/IBM/plex (see static/fonts/LICENSE-*.txt) */
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("/fonts/IBMPlexSans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("/fonts/IBMPlexSans-Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("/fonts/IBMPlexSans-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/IBMPlexMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/IBMPlexMono-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -42,7 +88,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   font-size: 18px;
   line-height: 1.65;
 }
@@ -95,6 +141,7 @@ a:hover {
   margin-left: 1.1rem;
   color: var(--muted);
   font-size: 0.95rem;
+  font-family: var(--font-mono);
 }
 
 .site-nav a:first-child {
@@ -107,7 +154,7 @@ main {
 
 h1, h2, h3, h4 {
   line-height: 1.25;
-  font-weight: 650;
+  font-weight: 600;
   color: var(--fg-strong);
 }
 
@@ -138,6 +185,7 @@ h1 {
 
 .post-list-title {
   color: var(--fg-strong);
+  font-weight: 600;
 }
 
 .zola-anchor {
@@ -193,15 +241,52 @@ h4:hover .zola-anchor {
 }
 
 code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 0.88em;
 }
 
 pre {
-  background: var(--bg-alt);
-  padding: 1rem 1.1rem;
+  /* The syntax highlighter sets its own inline background-color (matching
+     its theme's editor background), so this needs !important to actually
+     show a surface distinct from the page background. */
+  background: var(--bg-alt) !important;
+  border: 1px solid var(--border);
   border-radius: 6px;
+  padding: 1rem 1.1rem;
   overflow-x: auto;
+  position: relative;
+}
+
+.copy-code-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.25em 0.6em;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+pre:hover .copy-code-button,
+.copy-code-button:focus-visible {
+  opacity: 1;
+}
+
+.copy-code-button:hover {
+  color: var(--fg-strong);
+  border-color: var(--accent);
+}
+
+.copy-code-button.copied {
+  color: var(--accent-tip);
+  border-color: var(--accent-tip);
+  opacity: 1;
 }
 
 /* Required by Zola's syntax highlighter for correct line layout, see
