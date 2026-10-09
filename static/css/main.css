@@ -15,6 +15,23 @@
   --border: #e0e0e0;
   --hatch: rgba(22, 22, 22, 0.045);
   --max-width: 56rem;
+
+  /* Pagefind Component UI theming, see
+     https://pagefind.app/docs/css-variables/ */
+  --pf-text: var(--fg-strong);
+  --pf-text-secondary: var(--fg);
+  --pf-text-muted: var(--muted);
+  --pf-background: var(--bg);
+  --pf-border: var(--border);
+  --pf-border-focus: var(--accent);
+  --pf-skeleton: var(--bg-alt);
+  --pf-skeleton-shine: var(--border);
+  --pf-hover: var(--bg-alt);
+  --pf-mark: var(--accent);
+  --pf-outline-focus: var(--accent);
+  --pf-font: var(--font-sans);
+  --pf-border-radius: 6px;
+  --pf-modal-backdrop: rgba(22, 22, 22, 0.4);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,6 +46,7 @@
     --accent-warning: #ee5396;
     --border: #393939;
     --hatch: rgba(242, 244, 248, 0.035);
+    --pf-modal-backdrop: rgba(0, 0, 0, 0.6);
   }
 }
 
@@ -150,6 +168,11 @@ a:hover {
 
 .site-nav a:first-child {
   margin-left: 0;
+}
+
+.site-nav pagefind-modal-trigger {
+  margin-left: 1.1rem;
+  vertical-align: middle;
 }
 
 main {

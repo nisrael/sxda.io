@@ -10,6 +10,12 @@ zola build   # build to public/
 zola check   # validate internal/external links
 ```
 
+Search (via [Pagefind](https://pagefind.app/)) is built from the `public/` output, not from `zola serve`, so the search box won't return results during `zola serve` until you've run this at least once:
+
+```shell
+zola build && pagefind --site public
+```
+
 To quickly add a new post:
 
 ```shell
