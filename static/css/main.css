@@ -52,48 +52,51 @@
 
 /* IBM Plex, OFL-licensed: https://github.com/IBM/plex (see static/fonts/LICENSE-*.txt) */
 @font-face {
-  font-family: "IBM Plex Sans";
-  src: url("/fonts/IBMPlexSans-Regular.woff2") format("woff2");
+  font-family: 'IBM Plex Sans';
+  src: url('/fonts/IBMPlexSans-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "IBM Plex Sans";
-  src: url("/fonts/IBMPlexSans-Italic.woff2") format("woff2");
+  font-family: 'IBM Plex Sans';
+  src: url('/fonts/IBMPlexSans-Italic.woff2') format('woff2');
   font-weight: 400;
   font-style: italic;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "IBM Plex Sans";
-  src: url("/fonts/IBMPlexSans-SemiBold.woff2") format("woff2");
+  font-family: 'IBM Plex Sans';
+  src: url('/fonts/IBMPlexSans-SemiBold.woff2') format('woff2');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "IBM Plex Mono";
-  src: url("/fonts/IBMPlexMono-Regular.woff2") format("woff2");
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/IBMPlexMono-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "IBM Plex Mono";
-  src: url("/fonts/IBMPlexMono-SemiBold.woff2") format("woff2");
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/IBMPlexMono-SemiBold.woff2') format('woff2');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 
 :root {
-  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans:
+    'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono:
+    'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 * {
@@ -177,7 +180,31 @@ main {
   flex: 1;
 }
 
-h1, h2, h3, h4 {
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.not-found h1 {
+  font-family: var(--font-mono);
+  font-size: 4rem;
+  margin: 0;
+  color: var(--accent-note);
+}
+
+.not-found p {
+  color: var(--muted);
+  margin: 0.5rem 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
   line-height: 1.25;
   font-weight: 600;
   color: var(--fg-strong);
@@ -241,6 +268,51 @@ h4:hover .zola-anchor {
   margin-top: 0;
 }
 
+.toc {
+  margin-top: 1.5rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-alt);
+  font-size: 0.9rem;
+}
+
+.toc-title {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.toc > ul > li {
+  margin: 0.3rem 0;
+}
+
+.toc ul ul {
+  margin-top: 0.3rem;
+  padding-left: 1.1rem;
+}
+
+.toc ul ul li {
+  margin: 0.25rem 0;
+}
+
+.toc a {
+  color: var(--fg);
+}
+
+.toc a:hover {
+  color: var(--accent);
+}
+
 .post-body {
   margin-top: 1.5rem;
 }
@@ -274,15 +346,10 @@ pre {
   position: relative;
 }
 
-/* The border/padding/radius live on <code>, not <pre>, so the filename
-   label (a sibling of <code>, not a wrapper around it) can have its own
-   separate border above it — that's what lets the two highlight
-   independently instead of being stuck with one box's single border. */
+/* border on code, not on pre because pre can contain an optional filename,
+   which isn't part of the code block block. */
 pre > code {
   display: block;
-  /* The syntax highlighter sets its own inline background-color (matching
-     its theme's editor background), so this needs !important to actually
-     show a surface distinct from the page background. */
   background: var(--bg-alt) !important;
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -296,9 +363,8 @@ pre > code {
   border-radius: 0 0 6px 6px;
 }
 
-/* Hovering/focusing the "copy code" button highlights the code box's own
-   border, and separately the label's divider line below the filename —
-   but not the border around the filename text itself. */
+/* Hovering/focusing the "copy code" button highlights the border of the
+   code box and the divider line */
 pre:has(.copy-code-button:not(.copy-name-button):hover) > code,
 pre:has(.copy-code-button:not(.copy-name-button):focus-visible) > code {
   border-color: var(--accent);
@@ -309,11 +375,7 @@ pre:has(.copy-code-button:not(.copy-name-button):focus-visible) .code-label {
   border-bottom-color: var(--accent);
 }
 
-/* Filename label on a code block, e.g. ```bash,name=/etc/foo.conf
-   (any key=value on a fence becomes a data-* attribute on <code>, see
-   https://www.getzola.org/documentation/content/syntax-highlighting/).
-   Built as real DOM elements by copy-code.js, not ::before content, so the
-   filename isn't selected along with the code and can have its own button. */
+/* Filename label on a code block, built as real DOM elements by copy-code.js */
 .code-label {
   display: flex;
   align-items: center;
@@ -356,7 +418,10 @@ pre:has(.copy-code-button:not(.copy-name-button):focus-visible) .code-label {
   border: 1px solid var(--border);
   border-radius: 4px;
   cursor: pointer;
-  transition: opacity 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .copy-code-button:not(.inline) {
@@ -411,12 +476,7 @@ pre:hover .copy-code-button:not(.inline),
   border-radius: 4px;
 }
 
-/* GitHub-style alerts (zola.toml: markdown.github_alerts = true), e.g.
-   > [!NOTE]
-   > ...
-   Zola renders these as <blockquote class="markdown-alert-note">, overriding
-   the plain .post-body blockquote styling below. */
-.post-body blockquote[class^="markdown-alert-"] {
+.post-body blockquote[class^='markdown-alert-'] {
   margin: 1.4rem 0;
   padding: 0.9rem 1.1rem;
   border-radius: 6px;
@@ -425,7 +485,7 @@ pre:hover .copy-code-button:not(.inline),
   color: var(--fg);
 }
 
-.post-body blockquote[class^="markdown-alert-"] p {
+.post-body blockquote[class^='markdown-alert-'] p {
   margin: 0.3rem 0;
 }
 
