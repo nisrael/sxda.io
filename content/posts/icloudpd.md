@@ -6,43 +6,41 @@ date = 2026-01-04T14:28:00+01:00
 tags = ["icloud", "icloudpd"]
 +++
 
-# Apple iCloud Fotos Backup
+This tool lets you download all of your photos, or just the ones from a specific album, straight to your own machine. It's noticeably faster than going through the iCloud web interface itself, and on repeated runs it only grabs the new files.
 
-Mit dem folgenden Tool kann man alle Bilder oder die Bilder z.B. eines Albums auf den eigenen Rechner herunterladen. Der Download erfolgt deutlich schneller als über den iCloud Dienst selbst. Bei wiederholten Aufrufen werden nur die neuen Dateien heruntergeladen.
+After that, the `*.heic` images can be converted to JPEG with ImageMagick. But for that to work, all the images need to be in one directory.
 
-Danach können die \*.heic Bilder mit ImageMagick in JPEG konvertiert werden. Dafür müssen aber alle Bilder in einem Verzeichnis liegen.
-
-## PowerShell als Admin starten
+## Start PowerShell as Admin
 
 ```powershell
-# Script Ausführung erlauben
+# Allow script execution
 Set-ExecutionPolicy AllSigned
-# Chocotlatey installieren https://chocolatey.org/install
+# Install Chocolatey https://chocolatey.org/install
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-# Power Shell schliessen und erneut als Admin öffnen
-# Python über chocolatey installieren https://www.python.org/
+# Close PowerShell and reopen it as Admin
+# Install Python via Chocolatey https://www.python.org/
 choco install python
-# ImageMagick und exiftool über Chocolatey installieren https://imagemagick.org/index.php
+# Install ImageMagick and exiftool via Chocolatey https://imagemagick.org/index.php
 choco install ImageMagick exiftool
-# Power Shell schliessen und wieder als admin öffnen
-# icloudpd Python Client für iCloud Fotos installieren https://github.com/icloud-photos-downloader/icloud_photos_downloader
+# Close PowerShell and reopen it as admin
+# Install the icloudpd Python client for iCloud Photos https://github.com/icloud-photos-downloader/icloud_photos_downloader
 pip install icloudpd
 pip install pyicloud
-# Power Shell schliessen und
+# Close PowerShell and
 ```
 
-## neue cmd (nicht powershell) als normaler User starten
+## Start a new cmd (not PowerShell) as a normal user
 
 ```powershell
-# erstmalig anmelden und Passwort im System ablegen
+# Log in for the first time and store the password in the system
 $ icloud --username username@example.com
 ICloud Password for username@example.com:
 Save password in keyring? (y/N)
-# mit y beantworten
-# über iPhone bestätigen und Code eingeben
+# Answer with y
+# Confirm on your iPhone and enter the code
 ```
 
-## Verzeichnisstruktur anlegen:
+## Create the directory structure
 
 ```
 H:\iCloud
@@ -51,46 +49,46 @@ H:\iCloud\fotos
 H:\iCloud\tools
 ```
 
-Windows Executable von exittool herunterladen (<https://exiftool.org/>) und als `exiftool.exe` in `H:\iCloud\tools` ablegen.
+Download the exiftool Windows executable (<https://exiftool.org/>) and save it as `exiftool.exe` in `H:\iCloud\tools`.
 
-## Batch-Dateien
+## Batch files
 
-4 Batchdateien in `H:\iCloud` anlegen:
+Create 4 batch files in `H:\iCloud`:
 
-```powershell
+```powershell,name=01-download-all.bat
 @echo off
 icloudpd.exe -u username@example.com --folder-structure {:%%Y/%%Y-%%m} --set-exif-datetime --skip-live-photos --log-level error --directory "H:\iCloud\download"
 pause
 ```
 
-Der Wert für recent sollte angepasst werden, so dass alle Fotos des vergangengen Jahres heruntergeladen werden. Im Zweifelsfall einfach einen viel zu großen Wert eintragen. Dadurch werden bereits heruntergeladene Bilder erneut heruntergeladen und es dauert länger aber dafür sind dann sicher alle da.
+The value for `--recent` should be adjusted so that all photos from the past year get downloaded. When in doubt, just use a way-too-large number. This means already-downloaded photos get downloaded again and it takes longer, but you can be sure you've got everything.
 
-```powershell
+```powershell,name=02-download-recent.bat
 @echo off
 icloudpd.exe -u username@example.com --folder-structure {:%%Y/%%Y-%%m} --set-exif-datetime --skip-live-photos --log-level error --recent 500 --directory "H:\iCloud\download"
 pause
 ```
 
-```powershell
+```powershell,name=03-convert.bat
 @echo off
 echo %DATE% %TIME% mogrify start >> H:\iCloud\error.log
-echo Konvertiere *.HEIC -> *.JPG
+echo Converting *.HEIC -> *.JPG
 FOR /R H:\iCloud\download %%G IN (*.HEIC) DO (
    if not exist "%%~pG\%%~nG.jpg" magick mogrify -format jpg -define preserve-timestamp=true "%%G" 2>> H:\iCloud\error.log
    del "%%G"
 )
-echo %DATE% %TIME% mogrify ende >> H:\iCloud\error.log
-echo Fertig.
+echo %DATE% %TIME% mogrify end >> H:\iCloud\error.log
+echo Done.
 pause
 ```
 
-```powershell
+```powershell,name=04-rename.bat
 @echo off
 echo %DATE% %TIME% exiftool start >> H:\iCloud\error.log
-echo Benenne Dateien um
+echo Renaming files
 H:
 cd H:\iCloud
 .\tools\exiftool -d .\fotos\%%Y\%%Y-%%m\%%Y-%%m-%%d_%%H-%%M-%%S_%%%%lf.%%%%le "-filename<filemodifydate" "-filename<createdate" "-filename<datetimeoriginal" -r .\download 2>> H:\iCloud\error.log
-echo %DATE% %TIME% exiftool fertig >> H:\iCloud\error.log
+echo %DATE% %TIME% exiftool done >> H:\iCloud\error.log
 pause
 ```
