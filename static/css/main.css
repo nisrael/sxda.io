@@ -13,7 +13,7 @@
   --accent-tip: #198038;
   --accent-warning: #da1e28;
   --border: #e0e0e0;
-  --max-width: 42rem;
+  --max-width: 56rem;
 }
 
 @media (prefers-color-scheme: dark) {
