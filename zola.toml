@@ -1,0 +1,54 @@
+base_url = "https://sxda.io"
+title = "sxda.io"
+description = "Some notes about the things I do, which may include hiking, programming, analog synth, Catan, tinkering, puzzles and rogue li[kt]es besides other interesting stuff."
+
+default_language = "en"
+author = "Nils Israel"
+preserve_dotfiles_in_output = true
+
+compile_sass = false
+generate_feeds = true
+# Named "feed.xml" (with templates/feed.xml providing the Atom template) to
+# keep the feed URL subscribers already have from the old Jekyll/jekyll-feed setup.
+feed_filenames = ["feed.xml"]
+
+taxonomies = [
+  { name = "categories", feed = true },
+  { name = "tags", feed = true },
+]
+
+[markdown]
+smart_punctuation = true
+bottom_footnotes = true
+insert_anchor_links = "right"
+
+[markdown.highlighting]
+style = "inline"
+light_theme = "catppuccin-latte"
+dark_theme = "catppuccin-mocha"
+
+[extra]
+tagline = "Some notes about things I do"
+author_email = "nils@sxda.io"
+
+[extra.giscus]
+repo = "nisrael/sxda.io"
+repo_id = "R_kgDONQ1W7g"
+category = "Announcements"
+category_id = "DIC_kwDONQ1W7s4CkWrJ"
+
+[[extra.social]]
+label = "GitHub"
+url = "https://github.com/nisrael"
+
+[[extra.social]]
+label = "Bluesky"
+url = "https://bsky.app/profile/sxda.io"
+
+[[extra.social]]
+label = "Mastodon"
+url = "https://osna.social/@nils"
+
+[[extra.social]]
+label = "RSS"
+url = "/feed.xml"

@@ -1,0 +1,3 @@
+{% component note(type: string = "info") %}
+<div class="callout callout-{{ type }}">{{ body | markdown | safe }}</div>
+{% endcomponent note %}

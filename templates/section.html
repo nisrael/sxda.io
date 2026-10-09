@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}{{ section.title }} · {{ config.title }}{% endblock title %}
+
+{% block content %}
+<h1>{{ section.title }}</h1>
+
+<ul class="post-list">
+  {% for page in section.pages %}
+  <li>
+    <a class="post-list-title" href="{{ page.permalink }}">{{ page.title }}</a>
+    <time datetime="{{ page.date }}">{{ page.date | date(format="%Y-%m-%d") }}</time>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock content %}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ config.title }}{% endblock title %}</title>
+  <meta name="description" content="{% block description %}{{ config.description }}{% endblock description %}">
+  <link rel="alternate" type="application/atom+xml" title="{{ config.title }}" href="{{ get_url(path="feed.xml") }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ get_url(path="favicons/favicon-32x32.png") }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ get_url(path="favicons/favicon-16x16.png") }}">
+  <link rel="apple-touch-icon" href="{{ get_url(path="favicons/apple-touch-icon.png") }}">
+  <link rel="stylesheet" href="{{ get_url(path="css/main.css") }}">
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-header">
+      <a class="site-title" href="{{ get_url(path="/") }}">{{ config.title }}</a>
+      {% set posts_section = get_section(path="posts/_index.md") %}
+      {% set about_page = get_page(path="about.md") %}
+      <nav class="site-nav">
+        <a href="{{ get_url(path="/") }}">Home</a>
+        <a href="{{ posts_section.permalink }}">Posts</a>
+        <a href="{{ about_page.permalink }}">About</a>
+      </nav>
+    </header>
+
+    <main>
+      {% block content %}{% endblock content %}
+    </main>
+
+    <footer class="site-footer">
+      <nav class="social-links">
+        {% for link in config.extra.social %}
+        <a href="{{ link.url }}">{{ link.label }}</a>{% if not loop.last %} · {% endif %}
+        {% endfor %}
+      </nav>
+      <p>&copy; {{ now() | date(format="%Y") }} {{ config.author }}</p>
+    </footer>
+  </div>
+</body>
+</html>

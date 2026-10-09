@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.title }} · {{ config.title }}{% endblock title %}
+
+{% block description %}{{ (page.summary or config.description) | striptags }}{% endblock description %}
+
+{% block content %}
+<article>
+  <header class="post-header">
+    <h1>{{ page.title }}</h1>
+    {% if page.date %}
+    <p class="post-meta">
+      <time datetime="{{ page.date }}">{{ page.date | date(format="%Y-%m-%d") }}</time>
+      {% if page.taxonomies?.categories %}
+      · {% for term in page.taxonomies.categories %}<a href="{{ get_taxonomy_url(kind="categories", name=term) }}">{{ term }}</a>{% if not loop.last %}, {% endif %}{% endfor %}
+      {% endif %}
+    </p>
+    {% endif %}
+  </header>
+
+  <div class="post-body">
+    {{ page.content | safe }}
+  </div>
+
+  {% if page.taxonomies?.tags %}
+  <p class="post-tags">
+    {% for term in page.taxonomies.tags %}<a href="{{ get_taxonomy_url(kind="tags", name=term) }}">#{{ term }}</a>{% endfor %}
+  </p>
+  {% endif %}
+</article>
+
+{% if page.date %}
+<script src="https://giscus.app/client.js"
+  data-repo="{{ config.extra.giscus.repo }}"
+  data-repo-id="{{ config.extra.giscus.repo_id }}"
+  data-category="{{ config.extra.giscus.category }}"
+  data-category-id="{{ config.extra.giscus.category_id }}"
+  data-mapping="pathname"
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-input-position="bottom"
+  data-theme="preferred_color_scheme"
+  data-lang="en"
+  crossorigin="anonymous"
+  async>
+</script>
+{% endif %}
+{% endblock content %}
