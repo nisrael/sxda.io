@@ -25,9 +25,11 @@
       </a>
       {% set posts_section = get_section(path="posts/_index.md") %}
       {% set about_page = get_page(path="about.md") %}
+      {% set tags_taxonomy = get_taxonomy(kind="tags") %}
       <nav class="site-nav">
         <a href="{{ get_url(path="/") }}">Home</a>
         <a href="{{ posts_section.permalink }}">Posts</a>
+        <a href="{{ tags_taxonomy.permalink }}">Tags</a>
         <a href="{{ about_page.permalink }}">About</a>
       </nav>
     </header>
