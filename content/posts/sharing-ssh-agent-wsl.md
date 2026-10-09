@@ -1,6 +1,7 @@
 +++
 title = "Sharing the ssh agent between Windows and WSL"
 date = 2024-11-17T18:01:00+01:00
+updated = 2025-05-29T00:00:00+02:00
 
 [taxonomies]
 tags = ["ssh", "gpg", "wsl", "article"]
