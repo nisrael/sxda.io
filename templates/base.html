@@ -8,13 +8,21 @@
   <link rel="alternate" type="application/atom+xml" title="{{ config.title }}" href="{{ get_url(path="feed.xml") }}">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ get_url(path="favicons/favicon-32x32.png") }}">
   <link rel="icon" type="image/png" sizes="16x16" href="{{ get_url(path="favicons/favicon-16x16.png") }}">
+  <link rel="icon" type="image/png" sizes="192x192" href="{{ get_url(path="favicons/android-chrome-192x192.png") }}">
   <link rel="apple-touch-icon" href="{{ get_url(path="favicons/apple-touch-icon.png") }}">
   <link rel="stylesheet" href="{{ get_url(path="css/main.css") }}">
 </head>
 <body>
   <div class="wrap">
     <header class="site-header">
-      <a class="site-title" href="{{ get_url(path="/") }}">{{ config.title }}</a>
+      <a class="site-title" href="{{ get_url(path="/") }}" aria-label="{{ config.title }}">
+        <svg class="site-logo" viewBox="0 0 111.125 15.875" role="img" aria-hidden="true">
+          <g transform="translate(-52.645083,-136.87627)">
+            <path fill="currentColor" d="m 74.870083,151.16377 h -1.5875 v 1.5875 h -7.937499 v -1.5875 h 6.349999 v -3.175 h -4.762499 v -1.5875 h -1.5875 v -3.175 h 1.5875 v -1.5875 h 7.937499 v 1.5875 h -6.349999 v 3.175 h 4.762499 v 1.5875 h 1.5875 z m 12.7,1.5875 h -3.175 v -3.175 h -3.175 v 3.175 h -3.175 v -3.175 h 1.5875 v -1.5875 h 1.5875 v -1.5875 h -1.5875 v -1.5875 h -1.5875 v -3.175 h 3.175 v 3.175 h 3.175 v -3.175 h 3.175 v 3.175 h -1.5875 v 1.5875 h -1.5875 v 1.5875 h 1.5875 v 1.5875 h 1.5875 z m 12.699997,0 h -7.937497 v -1.5875 h -1.5875 v -7.9375 h 1.5875 v -1.5875 h 4.7625 v -3.175 h 3.174997 z m -3.174997,-1.5875 v -7.9375 h -3.175 v 7.9375 z m 15.874997,1.5875 h -7.9375 v -1.5875 h -1.5875 v -3.175 h 1.5875 v -1.5875 h 4.7625 v -3.175 h -4.7625 v -1.5875 h 6.35 v 1.5875 h 1.5875 z m -3.175,-1.5875 v -3.175 h -3.175 v 3.175 z m 14.2875,1.5875 h -4.7625 v -3.175 h 4.7625 z m 11.1125,-12.7 h -3.175 v -3.175 h 3.175 z m 3.175,12.7 h -9.525 v -1.5875 h 3.175 v -7.9375 h -3.175 v -1.5875 h 6.35 v 9.525 h 3.175 z m 12.7,-1.5875 h -1.5875 v 1.5875 h -6.35 v -1.5875 h -1.5875 v -7.9375 h 1.5875 v -1.5875 h 6.35 v 1.5875 h 1.5875 z m -3.175,0 v -7.9375 h -3.175 v 7.9375 z" />
+            <path fill="#ee5396" d="m 62.170083,152.75127 h -3.175 v -1.5875 h -1.5875 v -1.5875 h -1.5875 v -1.5875 h -1.5875 v -1.5875 h -1.5875 v -1.5875 h 1.5875 v -1.5875 h 1.5875 v -1.5875 h 1.5875 v -1.5875 h 1.5875 v -1.5875 h 3.175 v 1.5875 h -1.5875 v 1.5875 h -1.5875 v 1.5875 h -1.5875 v 1.5875 h -1.5875 v 1.5875 h 1.5875 v 1.5875 h 1.5875 v 1.5875 h 1.5875 v 1.5875 h 1.5875 z m 61.912497,0 h -4.7625 v -3.175 h 4.7625 z m 39.6875,-6.35 h -1.5875 v 1.5875 h -1.5875 v 1.5875 h -1.5875 v 1.5875 h -1.5875 v 1.5875 h -3.175 v -1.5875 h 1.5875 v -1.5875 h 1.5875 v -1.5875 h 1.5875 v -1.5875 h 1.5875 v -1.5875 h -1.5875 v -1.5875 h -1.5875 v -1.5875 h -1.5875 v -1.5875 h -1.5875 v -1.5875 h 3.175 v 1.5875 h 1.5875 v 1.5875 h 1.5875 v 1.5875 h 1.5875 v 1.5875 h 1.5875 z" />
+          </g>
+        </svg>
+      </a>
       {% set posts_section = get_section(path="posts/_index.md") %}
       {% set about_page = get_page(path="about.md") %}
       <nav class="site-nav">

@@ -24,8 +24,9 @@ insert_anchor_links = "right"
 
 [markdown.highlighting]
 style = "inline"
-light_theme = "catppuccin-latte"
-dark_theme = "catppuccin-mocha"
+light_theme = "github-light"
+dark_theme = "Carbonfox"
+extra_themes = ["extra/carbonfox-dark-theme.json"]
 
 [extra]
 tagline = "Some notes about things I do"

@@ -20,6 +20,8 @@ To edit from the web without a local checkout, use GitHub's web editor (press `.
 
 Comments on posts are powered by [giscus](https://giscus.app/), backed by this repo's GitHub Discussions.
 
+Dark mode uses [Carbonfox](https://github.com/EdenEast/nightfox.nvim) colors; code block highlighting in dark mode uses `extra/carbonfox-dark-theme.json`, vendored (MIT) from [keifererikson/vscode-nightfox](https://github.com/keifererikson/vscode-nightfox). Light mode uses IBM Carbon's "White" theme tokens and the `github-light` highlighting theme.
+
 ## License
 
 This work is published under the [MIT](LICENSE) License.

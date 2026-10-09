@@ -1,19 +1,32 @@
+/*
+ * Light: IBM Carbon Design System "White" theme tokens.
+ * Dark: Carbonfox (nightfox.nvim), https://github.com/EdenEast/nightfox.nvim
+ * Both come from the same IBM Carbon palette, so they stay siblings.
+ */
 :root {
-  --bg: #fdfcfb;
-  --fg: #1f1b16;
-  --muted: #6b6258;
-  --accent: #946c4c;
-  --border: #e6e0d8;
+  --bg: #ffffff;
+  --bg-alt: #f4f4f4;
+  --fg: #161616;
+  --fg-strong: #161616;
+  --muted: #525252;
+  --accent: #0f62fe;
+  --accent-tip: #198038;
+  --accent-warning: #da1e28;
+  --border: #e0e0e0;
   --max-width: 42rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #15130f;
-    --fg: #eee7dc;
-    --muted: #a39a8c;
-    --accent: #d2a679;
-    --border: #2c281f;
+    --bg: #161616;
+    --bg-alt: #252525;
+    --fg: #cdcecf;
+    --fg-strong: #f2f4f8;
+    --muted: #7b7c7e;
+    --accent: #78a9ff;
+    --accent-tip: #25be6a;
+    --accent-warning: #ee5396;
+    --border: #393939;
   }
 }
 
@@ -55,7 +68,7 @@ a:hover {
 
 .site-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.75rem;
@@ -63,9 +76,19 @@ a:hover {
 }
 
 .site-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--fg);
+  display: inline-flex;
+  border-bottom: none !important;
+  line-height: 0;
+}
+
+.site-title:hover {
+  opacity: 0.85;
+}
+
+.site-logo {
+  height: 1.15rem;
+  width: auto;
+  color: var(--fg-strong);
 }
 
 .site-nav a {
@@ -85,6 +108,7 @@ main {
 h1, h2, h3, h4 {
   line-height: 1.25;
   font-weight: 650;
+  color: var(--fg-strong);
 }
 
 h1 {
@@ -113,7 +137,22 @@ h1 {
 }
 
 .post-list-title {
-  color: var(--fg);
+  color: var(--fg-strong);
+}
+
+.zola-anchor {
+  margin-left: 0.4em;
+  font-size: 0.75em;
+  opacity: 0;
+  text-decoration: none;
+  border-bottom: none !important;
+}
+
+h1:hover .zola-anchor,
+h2:hover .zola-anchor,
+h3:hover .zola-anchor,
+h4:hover .zola-anchor {
+  opacity: 0.6;
 }
 
 .post-list time,
@@ -159,13 +198,32 @@ code {
 }
 
 pre {
+  background: var(--bg-alt);
   padding: 1rem 1.1rem;
   border-radius: 6px;
   overflow-x: auto;
 }
 
+/* Required by Zola's syntax highlighter for correct line layout, see
+   https://www.getzola.org/documentation/content/syntax-highlighting/ */
+.giallo-l {
+  display: inline-block;
+  min-height: 1lh;
+  width: 100%;
+}
+
+.giallo-ln {
+  display: inline-block;
+  user-select: none;
+  margin-right: 0.4em;
+  padding: 0.4em;
+  min-width: 3ch;
+  text-align: right;
+  opacity: 0.8;
+}
+
 :not(pre) > code {
-  background: var(--border);
+  background: var(--bg-alt);
   padding: 0.1em 0.35em;
   border-radius: 4px;
 }
@@ -175,7 +233,7 @@ pre {
   padding: 0.9rem 1.1rem;
   border-radius: 6px;
   border-left: 4px solid var(--accent);
-  background: var(--border);
+  background: var(--bg-alt);
 }
 
 .callout p {
@@ -183,11 +241,11 @@ pre {
 }
 
 .callout-warning {
-  border-left-color: #c0392b;
+  border-left-color: var(--accent-warning);
 }
 
 .callout-tip {
-  border-left-color: #2e8b57;
+  border-left-color: var(--accent-tip);
 }
 
 .term-list {
