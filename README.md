@@ -30,4 +30,4 @@ Dark mode uses [Carbonfox](https://github.com/EdenEast/nightfox.nvim) colors; co
 
 ## License
 
-This work is published under the [MIT](LICENSE) License.
+The site's code (templates, CSS, JavaScript, build config) is published under the [MIT](LICENSE) License. The written content (the posts and the about page) is published under [CC BY 4.0](LICENSE-CONTENT).
