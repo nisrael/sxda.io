@@ -13,6 +13,7 @@
   --accent-tip: #198038;
   --accent-warning: #da1e28;
   --border: #e0e0e0;
+  --hatch: rgba(22, 22, 22, 0.045);
   --max-width: 56rem;
 }
 
@@ -27,6 +28,7 @@
     --accent-tip: #25be6a;
     --accent-warning: #ee5396;
     --border: #393939;
+    --hatch: rgba(242, 244, 248, 0.035);
   }
 }
 
@@ -87,6 +89,8 @@ html {
 body {
   margin: 0;
   background: var(--bg);
+  background-image: repeating-linear-gradient(135deg, var(--hatch) 0, var(--hatch) 1px, transparent 1px, transparent 26px);
+  background-attachment: fixed;
   color: var(--fg);
   font-family: var(--font-sans);
   font-size: 18px;
