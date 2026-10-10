@@ -28,10 +28,18 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+
+      - name: Configure Pages
+        if: github.event_name == 'push'
+        uses: actions/configure-pages@v6
 
       - name: Install Zola
         run: |
@@ -54,9 +62,12 @@ jobs:
 
       - name: Upload site artifact
         if: github.event_name == 'push'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: public
+          # zola.toml sets preserve_dotfiles_in_output to ship static/.well-known
+          # (Matrix server delegation); v5 excludes dotfiles by default.
+          include-hidden-files: true
 
   deploy:
     if: github.event_name == 'push'
@@ -71,4 +82,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
